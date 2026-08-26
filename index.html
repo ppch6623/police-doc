@@ -246,7 +246,7 @@
       line-height: 1.15;
     }
 
-    /* ส่วนช่องตรวจร่างด้านล่างสุด */
+    /* ส่วนช่องตรวจร่างด้านล่างสุด (จัดระเบียบโครงสร้างใหม่ ป้องกันการทับซ้อน) */
     .draft-block {
       margin-left: 18%;
       font-size: 12.5pt;
@@ -269,6 +269,7 @@
       white-space: nowrap;
     }
 
+    /* คอลัมน์ที่ 1: ยศ + จุดไข่ปลาหน้าชื่อ */
     .draft-col-1 {
       width: 35%;
       display: flex;
@@ -286,6 +287,7 @@
       white-space: nowrap;
     }
 
+    /* คอลัมน์ที่ 2: ตำแหน่ง (ให้พื้นที่กว้างพอ ไม่ทับซ้อน) */
     .draft-col-2 {
       width: 45%;
       padding-left: 8px;
@@ -294,6 +296,7 @@
       white-space: nowrap;
     }
 
+    /* คอลัมน์ที่ 3: วันที่ด้านขวา (จัดเรียงชิดเดือน/ปีตรงกันทุกบรรทัด) */
     .draft-col-3 {
       width: 20%;
       padding-left: 5px;
@@ -310,6 +313,13 @@
       white-space: nowrap;
       color: #000;
       text-align: right;
+    }
+
+    .date-day-part {
+      width: 26px;
+      text-align: center;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .date-month-year-part {
@@ -535,20 +545,7 @@
       <div class="secret-header">ลับ</div>
 
       <div class="header-container">
-        <!-- ใช้ SVG ตราครุฑแบบฝังในตัว (แสดงผลชัวร์ 100% ไม่ติด CORS) -->
-        <svg class="garuda-img" viewBox="0 0 24 24" width="56" height="56" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-        </svg>
-        <img class="garuda-img" alt="ตราครุฑ" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik01MCAwQzIyLjQgMCAwIDIyLjQgMCA1MGMwIDI3LjYgMjIuNCA1MCA1MCA1MHM1MC0yMi40IDUwLTUwQzEwMCAyMi40IDc3LjYgMCA1MCAwem0wIDkwQzI3LjkgOTAgMTAgNzIuMSAxMCA1MGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwYzAgMjIuMS0xNy45IDQwLTQwIDQweiIgZmlsbD0iIzMzMyIvPjwvc3ZnPg==" style="display:none;">
-        <div style="position: absolute; left: 0; top: 0; width: 1.5cm; height: 1.5cm; display: flex; align-items: center; justify-content: center;">
-          <svg viewBox="0 0 512 512" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000" d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208 208-93.1 208-208S370.9 48 256 48zm0 376c-92.7 0-168-75.3-168-168s75.3-168 168-168 168 75.3 168 168-75.3 168-168 168zm-32-256h64v128h-64zm0 160h64v64h-64z"/>
-          </svg>
-        </div>
-      </div>
-      <!-- โค้ดตราครุฑมาตรฐานแบบ Base64 ภาพจริง -->
-      <div class="header-container">
-        <img class="garuda-img" alt="ตราครุฑ" src="https://upload.wikimedia.org/wikipedia/commons/e/f4/Emblem_of_Thailand.svg" onerror="this.onerror=null; this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';">
+        <img class="garuda-img" alt="ตราครุฑ" src="https://www.thailibrary.in.th/wp-content/uploads/2013/04/482457_10200601494981789_1825578775_n.jpg">
         <div class="doc-title">บันทึกข้อความ</div>
       </div>
 
@@ -654,7 +651,7 @@
       <div class="secret-header">ลับ</div>
 
       <div class="header-container">
-        <img class="garuda-img" alt="ตราครุฑ" src="https://upload.wikimedia.org/wikipedia/commons/e/f4/Emblem_of_Thailand.svg">
+        <img class="garuda-img" alt="ตราครุฑ" src="https://www.thailibrary.in.th/wp-content/uploads/2013/04/482457_10200601494981789_1825578775_n.jpg">
         <div class="doc-title">บันทึกข้อความ</div>
       </div>
 
