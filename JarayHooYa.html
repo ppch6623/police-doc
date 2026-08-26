@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>บันทึกข้อความ - สำนักงานจเรตำรวจ (2 หน้า)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'TH Sarabun IT9', 'TH SarabunPSK', 'Sarabun', sans-serif;
+      background-color: #eef2f5;
+      padding: 20px;
+      margin: 0;
+    }
+    
+    /* แถบควบคุม Dropdown ด้านบน */
+    .controls {
+      max-width: 950px;
+      margin: 0 auto 20px auto;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .control-group label {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #2c3e50;
+      font-family: sans-serif;
+    }
+
+    .control-group select, .control-group input {
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      font-family: sans-serif;
+    }
+
+    /* สไตล์ปุ่มพิมพ์เอกสาร */
+    .btn-print {
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.2s, transform 0.1s;
+      height: 33px;
+    }
+
+    .btn-print:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-print:active {
+      transform: scale(0.98);
+    }
+
+    /* กระดาษ A4 มาตรฐาน (กั้นหน้า 3 ซม. กั้นหลัง 2 ซม. บน-ล่าง 1 ซม.) */
+    .paper {
+      width: 210mm;
+      height: 297mm;
+      padding: 1cm 2cm 1cm 3cm;
+      margin: 0 auto 30px auto;
+      background: #ffffff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      font-size: 16pt;
+      line-height: 1.15;
+      color: #000000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* คำว่า ลับ ขนาด 32 pt สีแดง */
+    .secret-header {
+      text-align: center;
+      color: red;
+      font-size: 32pt;
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    /* ส่วนหัวตราครุฑและบันทึกข้อความ */
+    .header-container {
+      position: relative;
+      height: 1.5cm;
+      margin-bottom: 8px;
+    }
+
+    .garuda-img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 1.5cm;
+      width: auto;
+    }
+
+    .doc-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      text-align: center;
+      font-size: 29pt;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    /* หัวข้อหลัก (20pt ตัวหนา) */
+    .header-20pt {
+      font-size: 20pt;
+      font-weight: bold;
+    }
+
+    /* แถบข้อมูลส่วนหัว */
+    .info-row {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      margin-bottom: 4px;
+      font-size: 16pt;
+    }
+
+    .col-left {
+      width: 50%;
+    }
+
+    .col-right {
+      width: 50%;
+      text-align: left;
+    }
+
+    .dynamic-text {
+      color: #000000;
+      font-weight: normal;
+    }
+
+    /* บรรทัดเรียน: ระยะห่างก่อนหน้า 6 pt */
+    .row-learn {
+      margin-top: 6pt !important;
+      margin-bottom: 0;
+    }
+
+    /* คลาสป้องกันคำฉีกขาดกลางบรรทัด */
+    .nw {
+      white-space: nowrap;
+    }
+
+    /* ย่อหน้าภาษาไทยมาตรฐาน */
+    .content-p {
+      text-indent: 2.5cm;
+      text-align: justify;
+      text-justify: inter-character;
+      margin-top: 6pt;
+      margin-bottom: 0;
+      font-size: 16pt;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .content-p:first-child {
+      margin-top: 12pt;
+    }
+
+    /* บรรทัดสรุปตอนท้าย */
+    .closing-p {
+      text-indent: 2.5cm;
+      text-align: left;
+      margin-top: 6pt;
+      margin-bottom: 0;
+      font-size: 16pt;
+      line-height: 1.15;
+    }
+
+    /* ส่วนบล็อกลงชื่อ */
+    .signature-container {
+      position: relative;
+      width: 100%;
+      margin-top: 1.2cm;
+      margin-bottom: 0.8cm;
+    }
+
+    .signature-rank {
+      position: absolute;
+      top: 0;
+      right: 50%;
+      font-size: 16pt;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .signature-box {
+      margin-left: 50%;
+      margin-top: 1.15em;
+      display: inline-block;
+      position: relative;
+    }
+
+    .signature-name {
+      font-size: 16pt;
+      white-space: nowrap;
+      line-height: 1.15;
+    }
+
+    .signature-position {
+      font-size: 16pt;
+      white-space: nowrap;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 2px;
+      line-height: 1.15;
+    }
+
+    /* ส่วนช่องตรวจร่างด้านล่างสุด */
+    .draft-block {
+      margin-left: 18%;
+      font-size: 12.5pt;
+      line-height: 1.3;
+      color: #000000;
+      width: 75%;
+    }
+
+    .draft-title {
+      font-weight: bold;
+      font-size: 13pt;
+      margin-bottom: 2px;
+    }
+
+    .draft-row {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 2px;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .draft-col-1 {
+      width: 35%;
+      display: flex;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .draft-col-1 .rank {
+      flex-shrink: 0;
+    }
+
+    .draft-col-1 .dots {
+      flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .draft-col-2 {
+      width: 45%;
+      padding-left: 8px;
+      flex-shrink: 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .draft-col-3 {
+      width: 20%;
+      padding-left: 5px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .date-dots-part {
+      flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      color: #000;
+      text-align: right;
+    }
+
+    .date-month-year-part {
+      width: 42px;
+      text-align: left;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+      .controls {
+        display: none !important;
+      }
+      .paper {
+        box-shadow: none;
+        margin: 0;
+        width: 210mm;
+        height: 297mm;
+        padding: 1cm 2cm 1cm 3cm;
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
+      .paper:last-child {
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- แถบควบคุม Dropdown ด้านบน -->
+  <div class="controls">
+    <div class="control-group" style="grid-column: span 2;">
+      <label>เลือกแบบฟอร์มเอกสาร:</label>
+      <select id="selFormType" onchange="updateDocument()">
+        <option value="1">แบบที่ 1: ส่งเรื่องร้องเรียนกล่าวหาข้าราชการตำรวจ</option>
+        <option value="2">แบบที่ 2: ส่งเรื่องร้องเรียน ร้องทุกข์ แจ้งเบาะแส (บัตรสนเท่ห์)</option>
+        <option value="3" selected>แบบที่ 3: ส่งเรื่องร้องทุกข์ แจ้งเบาะแส และขอความช่วยเหลือ</option>
+      </select>
+    </div>
+
+    <!-- สวิตช์ตั้งค่าวันที่ส่วนตรวจร่างเฉพาะบรรทัดสุดท้าย -->
+    <div class="control-group" style="grid-column: span 2; display: flex; flex-direction: row; align-items: center; gap: 8px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+      <input type="checkbox" id="chkAutoDate" checked onchange="updateDocument()" style="width: 18px; height: 18px; cursor: pointer;">
+      <label for="chkAutoDate" style="font-size: 13px; font-weight: bold; color: #1e293b; cursor: pointer; margin-bottom: 0;">
+        ใช้วันที่ปัจจุบันในบรรทัดผู้ร่าง/พิมพ์ (ติ๊กออกเพื่อใช้จุดไข่ปลา)
+      </label>
+    </div>
+
+    <div class="control-group">
+      <label>ยศ สว. (บรรทัดตรวจร่าง):</label>
+      <select id="selSwRank" onchange="updateDocument()">
+        <option value="ว่าที่ พ.ต.ต.หญิง">ว่าที่ พ.ต.ต.หญิง</option>
+        <option value="พ.ต.ต.หญิง">พ.ต.ต.หญิง</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>ผู้ร่าง/พิมพ์ (บรรทัดสุดท้าย):</label>
+      <select id="selDrafter" onchange="updateDocument()">
+        <option value="ว่าที่ ร.ต.ท. ธีรวุธ บรรหารนุกูลกิจ">ว่าที่ ร.ต.ท. ธีรวุธ บรรหารนุกูลกิจ</option>
+        <option value="ว่าที่ ร.ต.ท. สาโรจน์ ตรีสาขา">ว่าที่ ร.ต.ท. สาโรจน์ ตรีสาขา</option>
+        <option value="ว่าที่ ร.ต.ท. ปวัสสร สุธรรม">ว่าที่ ร.ต.ท. ปวัสสร สุธรรม</option>
+        <option value="ว่าที่ ร.ต.ท. วิทยา หลักตา">ว่าที่ ร.ต.ท. วิทยา หลักตา</option>
+        <option value="ว่าที่ ร.ต.ท. สุภวัตร รักกุศล">ว่าที่ ร.ต.ท. สุภวัตร รักกุศล</option>
+        <option value="ว่าที่ ร.ต.ท.หญิง นวลฉวี ชูทอง">ว่าที่ ร.ต.ท.หญิง นวลฉวี ชูทอง</option>
+        <option value="ว่าที่ ร.ต.ท.พลพจน์ ชื่นแช่ม" selected>ว่าที่ ร.ต.ท.พลพจน์ ชื่นแช่ม</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>ชื่อผู้ลงนาม:</label>
+      <select id="selSigner" onchange="updateDocument()">
+        <optgroup label="ผู้ลงนามหลัก">
+          <option value="เอกราช ลิ้มสังกาศ">เอกราช ลิ้มสังกาศ</option>
+          <option value="วีรวิชญ์ บัวประเสริฐยิ่ง">วีรวิชญ์ บัวประเสริฐยิ่ง</option>
+          <option value="ปราศรัย จิตตสนธิ">ปราศรัย จิตตสนธิ</option>
+          <option value="กานตพงศ์ ชัยรุ่งเรือง">กานตพงศ์ ชัยรุ่งเรือง</option>
+        </optgroup>
+        <optgroup label="ผู้ลงนาม / ผู้บังคับบัญชา">
+          <option value="เจนกมล คำนวล">เจนกมล คำนวล</option>
+          <option value="สุวรรณ์ เชี่ยวนาวินธวัช" selected>สุวรรณ์ เชี่ยวนาวินธวัช</option>
+          <option value="สถาพร เอมโอษฐ์">สถาพร เอมโอษฐ์</option>
+          <option value="นครินทร์ สุคนธวิท">นครินทร์ สุคนธวิท</option>
+          <option value="วริศร์สิริภ์ ลีละสิริ">วริศร์สิริภ์ ลีละสิริ</option>
+          <option value="ชัชชัย วงค์สุนะ">ชัชชัย วงค์สุนะ</option>
+          <option value="ประพันธ์ศักดิ์ ประสานสุข">ประพันธ์ศักดิ์ ประสานสุข</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>หน่วยรับผิดชอบ (ผัง กต.1-10):</label>
+      <select id="selUnit" onchange="updateDocument()">
+        <optgroup label="กต.1">
+          <option value="ภ.๑" data-recipient="ผบช.ภ.๑">ภ.๑</option>
+          <option value="สบร." data-recipient="ผบก.สบร.">สบร.</option>
+          <option value="ศปก.ตร." data-recipient="ผอ.ศปก.ตร.">ศปก.ตร.</option>
+          <option value="ศปก.ศปอส.ตร." data-recipient="ผอ.ศปอส.ตร.">ศปก.ศปอส.ตร.</option>
+        </optgroup>
+        <optgroup label="กต.2">
+          <option value="ภ.๒" data-recipient="ผบช.ภ.๒">ภ.๒</option>
+          <option value="บช.ปส." data-recipient="ผบช.ปส.">บช.ปส.</option>
+          <option value="บช.ศ." data-recipient="ผบช.ศ.">บช.ศ.</option>
+          <option value="ตท." data-recipient="ผบก.ตท.">ตท.</option>
+          <option value="สท." data-recipient="ผบก.สท.">สท.</option>
+          <option value="สง.ก.ต.ช." data-recipient="ผบก.สง.ก.ต.ช.">สง.ก.ต.ช.</option>
+        </optgroup>
+        <optgroup label="กต.3">
+          <option value="ภ.๓" data-recipient="ผบช.ภ.๓" selected>ภ.๓</option>
+          <option value="บช.ส." data-recipient="ผบช.ส.">บช.ส.</option>
+        </optgroup>
+        <optgroup label="กต.4">
+          <option value="ภ.๔" data-recipient="ผบช.ภ.๔">ภ.๔</option>
+          <option value="สตส." data-recipient="ผบช.สตส.">สตส.</option>
+          <option value="สงป." data-recipient="ผบช.สงป.">สงป.</option>
+          <option value="สลก.ตร." data-recipient="ผบก.สลก.ตร.">สลก.ตร.</option>
+        </optgroup>
+        <optgroup label="กต.5">
+          <option value="ภ.๕" data-recipient="ผบช.ภ.๕">ภ.๕</option>
+          <option value="รพ.ตร." data-recipient="พตร.">รพ.ตร.</option>
+          <option value="สกบ." data-recipient="ผบช.สกบ.">สกบ.</option>
+          <option value="สกพ." data-recipient="ผบช.สกพ.">สกพ.</option>
+          <option value="วน." data-recipient="ผบก.วน.">วน.</option>
+        </optgroup>
+        <optgroup label="กต.6">
+          <option value="ภ.๖" data-recipient="ผบช.ภ.๖">ภ.๖</option>
+          <option value="บช.สอท." data-recipient="ผบช.สอท.">บช.สอท.</option>
+          <option value="กมค." data-recipient="ผบช.กมค.">กมค.</option>
+          <option value="สง.ก.ตร." data-recipient="ผบช.สง.ก.ตร.">สง.ก.ตร.</option>
+        </optgroup>
+        <optgroup label="กต.7">
+          <option value="ภ.๗" data-recipient="ผบช.ภ.๗">ภ.๗</option>
+          <option value="รร.นรต." data-recipient="ผบช.รร.นรต.">รร.นรต.</option>
+          <option value="บช.ตชด." data-recipient="ผบช.ตชด.">บช.ตชด.</option>
+          <option value="สยศ.ตร." data-recipient="ผบช.สยศ.ตร.">สยศ.ตร.</option>
+          <option value="บ.ตร." data-recipient="ผบก.บ.ตร.">บ.ตร.</option>
+        </optgroup>
+        <optgroup label="กต.8">
+          <option value="ภ.๘" data-recipient="ผบช.ภ.๘">ภ.๘</option>
+          <option value="สตม." data-recipient="ผบช.สตม.">สตม.</option>
+        </optgroup>
+        <optgroup label="กต.9">
+          <option value="ภ.๙" data-recipient="ผบช.ภ.๙">ภ.๙</option>
+          <option value="บช.ก." data-recipient="ผบช.ก.">บช.ก.</option>
+          <option value="บช.ทท." data-recipient="ผบช.ทท.">บช.ทท.</option>
+        </optgroup>
+        <optgroup label="กต.10">
+          <option value="บช.น." data-recipient="ผบช.น.">บช.น.</option>
+          <option value="สพฐ.ตร." data-recipient="ผบช.สพฐ.ตร.">สพฐ.ตร.</option>
+          <option value="สทส." data-recipient="ผบช.สทส.">สทส.</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>จำนวนเรื่อง:</label>
+      <input type="text" id="iptCount" value="๑๕" oninput="updateDocument()">
+    </div>
+
+    <!-- Dropdown ครั้งที่ประชุม (37 - 50) -->
+    <div class="control-group">
+      <label>ครั้งที่ประชุม:</label>
+      <select id="selMeeting" onchange="updateDocument()">
+        <option value="๓๗/๒๕๖๙">๓๗/๒๕๖๙</option>
+        <option value="๓๘/๒๕๖๙" selected>๓๘/๒๕๖๙</option>
+        <option value="๓๙/๒๕๖๙">๓๙/๒๕๖๙</option>
+        <option value="๔๐/๒๕๖๙">๔๐/๒๕๖๙</option>
+        <option value="๔๑/๒๕๖๙">๔๑/๒๕๖๙</option>
+        <option value="๔๒/๒๕๖๙">๔๒/๒๕๖๙</option>
+        <option value="๔๓/๒๕๖๙">๔๓/๒๕๖๙</option>
+        <option value="๔๔/๒๕๖๙">๔๔/๒๕๖๙</option>
+        <option value="๔๕/๒๕๖๙">๔๕/๒๕๖๙</option>
+        <option value="๔๖/๒๕๖๙">๔๖/๒๕๖๙</option>
+        <option value="๔๗/๒๕๖๙">๔๗/๒๕๖๙</option>
+        <option value="๔๘/๒๕๖๙">๔๘/๒๕๖๙</option>
+        <option value="๔๙/๒๕๖๙">๔๙/๒๕๖๙</option>
+        <option value="๕๐/๒๕๖๙">๕๐/๒๕๖๙</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>วันที่ประชุม:</label>
+      <input type="text" id="iptMeetingDate" value="๒๕ ส.ค.๖๙" oninput="updateDocument()">
+    </div>
+
+    <!-- Dropdown เดือน/ปี (12 เดือน) -->
+    <div class="control-group">
+      <label>เดือน/ปี (ด้านบน):</label>
+      <select id="selDateHeader" onchange="updateDocument()">
+        <option value="มกราคม ๒๕๖๙">มกราคม ๒๕๖๙</option>
+        <option value="กุมภาพันธ์ ๒๕๖๙">กุมภาพันธ์ ๒๕๖๙</option>
+        <option value="มีนาคม ๒๕๖๙">มีนาคม ๒๕๖๙</option>
+        <option value="เมษายน ๒๕๖๙">เมษายน ๒๕๖๙</option>
+        <option value="พฤษภาคม ๒๕๖๙">พฤษภาคม ๒๕๖๙</option>
+        <option value="มิถุนายน ๒๕๖๙">มิถุนายน ๒๕๖๙</option>
+        <option value="กรกฎาคม ๒๕๖๙">กรกฎาคม ๒๕๖๙</option>
+        <option value="สิงหาคม ๒๕๖๙" selected>สิงหาคม ๒๕๖๙</option>
+        <option value="กันยายน ๒๕๖๙">กันยายน ๒๕๖๙</option>
+        <option value="ตุลาคม ๒๕๖๙">ตุลาคม ๒๕๖๙</option>
+        <option value="พฤศจิกายน ๒๕๖๙">พฤศจิกายน ๒๕๖๙</option>
+        <option value="ธันวาคม ๒๕๖๙">ธันวาคม ๒๕๖๙</option>
+      </select>
+    </div>
+
+    <!-- ปุ่มพิมพ์เอกสารด้านบน -->
+    <div class="control-group" style="grid-column: span 2;">
+      <button type="button" class="btn-print" onclick="window.print()">
+        🖨️ พิมพ์เอกสาร / บันทึก PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= หน้าที่ 1 (มีช่องตรวจร่างด้านล่าง) ================= -->
+  <div class="paper">
+    
+    <div>
+      <div class="secret-header">ลับ</div>
+
+      <div class="header-container">
+        <!-- ใช้ SVG ตราครุฑแบบฝังในตัว (แสดงผลชัวร์ 100% ไม่ติด CORS) -->
+        <svg class="garuda-img" viewBox="0 0 24 24" width="56" height="56" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        <img class="garuda-img" alt="ตราครุฑ" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPjxwYXRoIGQ9Ik01MCAwQzIyLjQgMCAwIDIyLjQgMCA1MGMwIDI3LjYgMjIuNCA1MCA1MCA1MHM1MC0yMi40IDUwLTUwQzEwMCAyMi40IDc3LjYgMCA1MCAwem0wIDkwQzI3LjkgOTAgMTAgNzIuMSAxMCA1MGMwLTIyLjEgMTcuOS00MCA0MC00MHM0MCAxNy45IDQwIDQwYzAgMjIuMS0xNy45IDQwLTQwIDQweiIgZmlsbD0iIzMzMyIvPjwvc3ZnPg==" style="display:none;">
+        <div style="position: absolute; left: 0; top: 0; width: 1.5cm; height: 1.5cm; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 512 512" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#000" d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208 208-93.1 208-208S370.9 48 256 48zm0 376c-92.7 0-168-75.3-168-168s75.3-168 168-168 168 75.3 168 168-75.3 168-168 168zm-32-256h64v128h-64zm0 160h64v64h-64z"/>
+          </svg>
+        </div>
+      </div>
+      <!-- โค้ดตราครุฑมาตรฐานแบบ Base64 ภาพจริง -->
+      <div class="header-container">
+        <img class="garuda-img" alt="ตราครุฑ" src="https://upload.wikimedia.org/wikipedia/commons/e/f4/Emblem_of_Thailand.svg" onerror="this.onerror=null; this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';">
+        <div class="doc-title">บันทึกข้อความ</div>
+      </div>
+
+      <div class="info-row">
+        <div class="col-left"><span class="header-20pt">ส่วนราชการ</span> &nbsp;&nbsp;&nbsp;&nbsp;จต.</div>
+        <div class="col-right">โทร. ๐ ๒๕๐๙ ๙๓๗๕</div>
+      </div>
+
+      <div class="info-row">
+        <div class="col-left"><span class="header-20pt">ที่</span> &nbsp;&nbsp;&nbsp;&nbsp;๐๐๑๓.๑๕๑/</div>
+        <div class="col-right"><span class="header-20pt">วันที่</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="txtDateHeader dynamic-text">สิงหาคม ๒๕๖๙</span></div>
+      </div>
+
+      <div class="info-row">
+        <div><span class="header-20pt">เรื่อง</span> &nbsp;&nbsp;<span class="txtSubject">ส่งเรื่องร้องทุกข์ แจ้งเบาะแส และขอความช่วยเหลือ</span></div>
+      </div>
+
+      <div class="info-row row-learn">
+        <div><span class="header-20pt">เรียน</span> &nbsp;&nbsp;<span class="txtRecipient dynamic-text">ผบช.ภ.๓</span></div>
+      </div>
+
+      <!-- เนื้อหาเอกสาร -->
+      <div class="dynamicContent"></div>
+
+      <div class="closing-p txtClosing">
+        จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการในส่วนที่เกี่ยวข้อง
+      </div>
+
+      <!-- ส่วนบล็อกลงชื่อ -->
+      <div class="signature-container">
+        <div class="signature-rank">พล.ต.ต.</div>
+        <div class="signature-box">
+          <div class="signature-name">(<span class="txtSigner dynamic-text">สุวรรณ์&nbsp;&nbsp;เชี่ยวนาวินธวัช</span>)</div>
+          <div class="signature-position">รอง จตร.ปรท.จตร.(หน.จต.)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ส่วนช่องการตรวจด้านล่างสุด (หน้าที่ 1 มีตามปกติ) -->
+    <div>
+      <div class="draft-block">
+        <div class="draft-title">ตรวจ</div>
+        
+        <div class="draft-row">
+          <div class="draft-col-1">
+            <span class="rank">พ.ต.อ.</span>
+            <span class="dots">....................................................................................................</span>
+          </div>
+          <div class="draft-col-2">รอง ผบก.ฯ ปรท.ผบก.อก.จต.</div>
+          <div class="draft-col-3">
+            <span class="date-dots-part">..................................................................</span>
+            <span class="date-month-year-part txtDefaultMonthYear">ส.ค.๖๙</span>
+          </div>
+        </div>
+
+        <div class="draft-row">
+          <div class="draft-col-1">
+            <span class="rank">พ.ต.ท.</span>
+            <span class="dots">....................................................................................................</span>
+          </div>
+          <div class="draft-col-2">รอง ผกก.ฯ ปรท.ผกก.ฝรท.บก.อก.จต.</div>
+          <div class="draft-col-3">
+            <span class="date-dots-part">..................................................................</span>
+            <span class="date-month-year-part txtDefaultMonthYear">ส.ค.๖๙</span>
+          </div>
+        </div>
+
+        <div class="draft-row">
+          <div class="draft-col-1">
+            <span class="rank txtSwRank">ว่าที่ พ.ต.ต.หญิง</span>
+            <span class="dots">....................................................................................................</span>
+          </div>
+          <div class="draft-col-2">สว.ฝรท.บก.อก.จต.</div>
+          <div class="draft-col-3">
+            <span class="date-dots-part">..................................................................</span>
+            <span class="date-month-year-part txtDefaultMonthYear">ส.ค.๖๙</span>
+          </div>
+        </div>
+
+        <div class="draft-row">
+          <div class="draft-col-1">
+            <span class="rank txtDrafter dynamic-text">ว่าที่ ร.ต.ท.พลพจน์ ชื่นแช่ม</span>
+          </div>
+          <div class="draft-col-2">รอง ฝรท.บก.อก.จต.ร่าง/พิมพ์</div>
+          <div class="draft-col-3">
+            <span class="date-dots-part txtDrafterDots">..................................................................</span>
+            <span class="date-day-part txtDrafterDay" style="display:none;"></span>
+            <span class="date-month-year-part txtDrafterMonthYear">ส.ค.๖๙</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="secret-header" style="margin-top: 4px;">ลับ</div>
+    </div>
+
+  </div>
+
+
+  <!-- ================= หน้าที่ 2 (ตัดช่องตรวจร่างออก) ================= -->
+  <div class="paper">
+    
+    <div>
+      <div class="secret-header">ลับ</div>
+
+      <div class="header-container">
+        <img class="garuda-img" alt="ตราครุฑ" src="https://upload.wikimedia.org/wikipedia/commons/e/f4/Emblem_of_Thailand.svg">
+        <div class="doc-title">บันทึกข้อความ</div>
+      </div>
+
+      <div class="info-row">
+        <div class="col-left"><span class="header-20pt">ส่วนราชการ</span> &nbsp;&nbsp;&nbsp;&nbsp;จต.</div>
+        <div class="col-right">โทร. ๐ ๒๕๐๙ ๙๓๗๕</div>
+      </div>
+
+      <div class="info-row">
+        <div class="col-left"><span class="header-20pt">ที่</span> &nbsp;&nbsp;&nbsp;&nbsp;๐๐๑๓.๑๕๑/</div>
+        <div class="col-right"><span class="header-20pt">วันที่</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="txtDateHeader dynamic-text">สิงหาคม ๒๕๖๙</span></div>
+      </div>
+
+      <div class="info-row">
+        <div><span class="header-20pt">เรื่อง</span> &nbsp;&nbsp;<span class="txtSubject">ส่งเรื่องร้องทุกข์ แจ้งเบาะแส และขอความช่วยเหลือ</span></div>
+      </div>
+
+      <div class="info-row row-learn">
+        <div><span class="header-20pt">เรียน</span> &nbsp;&nbsp;<span class="txtRecipient dynamic-text">ผบช.ภ.๓</span></div>
+      </div>
+
+      <!-- เนื้อหาเอกสาร -->
+      <div class="dynamicContent"></div>
+
+      <div class="closing-p txtClosing">
+        จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการในส่วนที่เกี่ยวข้อง
+      </div>
+
+      <!-- ส่วนบล็อกลงชื่อ -->
+      <div class="signature-container">
+        <div class="signature-rank">พล.ต.ต.</div>
+        <div class="signature-box">
+          <div class="signature-name">(<span class="txtSigner dynamic-text">สุวรรณ์&nbsp;&nbsp;เชี่ยวนาวินธวัช</span>)</div>
+          <div class="signature-position">รอง จตร.ปรท.จตร.(หน.จต.)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ตัดช่องตรวจร่างออก เหลือเพียงคำว่า ลับ ด้านล่างสุด -->
+    <div>
+      <div class="secret-header" style="margin-top: 4px;">ลับ</div>
+    </div>
+
+  </div>
+
+  <script>
+    function toThaiNumerals(str) {
+      if (str === null || str === undefined) return '';
+      const thaiNumbers = ['๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'];
+      return str.toString().replace(/[0-9]/g, match => thaiNumbers[parseInt(match)]);
+    }
+
+    const monthMap = {
+      'มกราคม': 'ม.ค.', 'กุมภาพันธ์': 'ก.พ.', 'มีนาคม': 'มี.ค.', 'เมษายน': 'เม.ย.',
+      'พฤษภาคม': 'พ.ค.', 'มิถุนายน': 'มิ.ย.', 'กรกฎาคม': 'ก.ค.', 'สิงหาคม': 'ส.ค.',
+      'กันยายน': 'ก.ย.', 'ตุลาคม': 'ต.ค.', 'พฤศจิกายน': 'พ.ย.', 'ธันวาคม': 'ธ.ค.'
+    };
+
+    function getMonthYearString(dateHeaderRaw) {
+      let shortMonth = 'ส.ค.';
+      let year2Digits = '๖๙';
+
+      for (let monthName in monthMap) {
+        if (dateHeaderRaw.includes(monthName)) {
+          shortMonth = monthMap[monthName];
+          break;
+        }
+      }
+
+      let text = toThaiNumerals(dateHeaderRaw);
+      let digits = text.match(/[๐-๙]+/g);
+      if (digits && digits.length > 0) {
+        let lastNumStr = digits[digits.length - 1];
+        if (lastNumStr.length >= 2) {
+          year2Digits = lastNumStr.slice(-2);
+        } else {
+          year2Digits = lastNumStr;
+        }
+      }
+
+      return `${shortMonth}${year2Digits}`;
+    }
+
+    function updateDocument() {
+      const formType = document.getElementById('selFormType').value;
+      const signer = document.getElementById('selSigner').value;
+      const unitSelect = document.getElementById('selUnit');
+      const unit = unitSelect.value;
+      const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+      const recipient = selectedOption.getAttribute('data-recipient') || ("ผบช." + unit);
+      
+      const count = toThaiNumerals(document.getElementById('iptCount').value);
+      const meeting = toThaiNumerals(document.getElementById('selMeeting').value);
+      const meetingDate = toThaiNumerals(document.getElementById('iptMeetingDate').value);
+      const dateHeader = toThaiNumerals(document.getElementById('selDateHeader').value);
+      const swRank = document.getElementById('selSwRank').value;
+      const drafter = document.getElementById('selDrafter').value;
+      const isAutoDate = document.getElementById('chkAutoDate').checked;
+
+      // อัปเดตข้อมูลให้ทั้ง 2 หน้าพร้อมกันผ่าน QuerySelectorAll
+      document.querySelectorAll('.txtDateHeader').forEach(el => el.innerText = dateHeader);
+      
+      const signerTwoSpaces = signer.replace(/\s+/g, '&nbsp;&nbsp;');
+      document.querySelectorAll('.txtSigner').forEach(el => el.innerHTML = signerTwoSpaces);
+
+      document.querySelectorAll('.txtSwRank').forEach(el => el.innerText = swRank);
+      document.querySelectorAll('.txtDrafter').forEach(el => el.innerText = drafter);
+
+      // อัปเดตเดือน/ปีมาตรฐานสำหรับ 3 บรรทัดบน
+      const monthYearStr = getMonthYearString(dateHeader);
+      document.querySelectorAll('.txtDefaultMonthYear').forEach(el => el.innerText = monthYearStr);
+
+      // จัดการบรรทัดสุดท้าย (ของผู้ร่าง/พิมพ์)
+      if (isAutoDate) {
+        const now = new Date();
+        const thDay = toThaiNumerals(new Intl.DateTimeFormat('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric' }).format(now));
+        const thMonthFull = new Intl.DateTimeFormat('th-TH', { timeZone: 'Asia/Bangkok', month: 'long' }).format(now);
+        let shortMonth = monthMap[thMonthFull] || 'ส.ค.';
+        const thYearFull = toThaiNumerals(new Intl.DateTimeFormat('th-TH', { timeZone: 'Asia/Bangkok', year: 'numeric' }).format(now));
+        let year2Digits = thYearFull.slice(-2);
+
+        document.querySelectorAll('.txtDrafterDots').forEach(el => {
+          el.innerText = '';
+          el.style.display = 'none';
+        });
+        document.querySelectorAll('.txtDrafterDay').forEach(el => {
+          el.innerText = thDay;
+          el.style.display = 'inline-block';
+        });
+        document.querySelectorAll('.txtDrafterMonthYear').forEach(el => el.innerText = `${shortMonth}${year2Digits}`);
+      } else {
+        document.querySelectorAll('.txtDrafterDots').forEach(el => {
+          el.innerText = '..................................................................';
+          el.style.display = 'inline';
+        });
+        document.querySelectorAll('.txtDrafterDay').forEach(el => {
+          el.innerText = '';
+          el.style.display = 'none';
+        });
+        document.querySelectorAll('.txtDrafterMonthYear').forEach(el => el.innerText = monthYearStr);
+      }
+
+      document.querySelectorAll('.txtRecipient').forEach(el => el.innerText = recipient);
+
+      let subjectText = "";
+      let closingText = "";
+      let contentHTML = "";
+
+      if (formType === "1") {
+        subjectText = "ส่งเรื่องร้องเรียนกล่าวหาข้าราชการตำรวจมาเพื่อดำเนินการ";
+        closingText = "จึงเรียนมาเพื่อโปรดพิจารณาและดำเนินการในส่วนที่เกี่ยวข้อง";
+        
+        contentHTML = `
+          <p class="content-p">
+            ด้วย ตร. โดย จต. ได้รับเรื่องร้องเรียนกล่าวหาข้าราชการตำรวจ <span class="nw">ซึ่งอยู่ในความรับผิดชอบ</span><span class="nw">ของหน่วยงานท่าน</span> จำนวน <span class="dynamic-text">${count}</span> เรื่อง รายละเอียดปรากฏตามบัญชีเรื่องร้องเรียนและเอกสารที่เกี่ยวข้องที่แนบ
+          </p>
+          <p class="content-p">
+            คณะทำงานพิจารณากลั่นกรองเรื่องร้องเรียนข้าราชการตำรวจ เรื่องร้องทุกข์ขอความ<span class="nw">ช่วยเหลือ</span> หรือแจ้งเบาะแสการกระทำผิดกฎหมาย <span class="nw">สำนักงานจเรตำรวจ ตามคำสั่ง จต. ที่ ๒๑๑/๒๕๖๘</span> <span class="nw">ลง ๒๙ ต.ค.๖๘</span> ในการประชุมครั้งที่ <span class="dynamic-text">${meeting}</span> เมื่อวันที่ <span class="dynamic-text">${meetingDate}</span> มีมติส่งเรื่องให้ <span class="dynamic-text">${unit}</span> ดำเนินการ<span class="nw">ตามคำสั่ง ตร.</span> ที่ ๒๘๔/๒๕๖๙ ลง ๒๓ มิ.ย.๖๙ เรื่อง การจัดการเรื่องร้องเรียนหรือร้องทุกข์ ดังนั้นเพื่อให้การปฏิบัติเป็นไปด้วยความเรียบร้อย จึงส่งเรื่องดังกล่าวมาเพื่อดำเนินการตามหน้าที่และอำนาจ <span class="nw">ให้เป็นไปตามกฎหมาย</span> และระเบียบที่เกี่ยวข้อง เมื่อเสร็จสิ้นแล้วให้แจ้งผลแก่ผู้ร้อง (ถ้ามี) และหน่วยงานที่ส่งเรื่องมา (ถ้ามี) แล้วรายงานผลพร้อมเอกสารประกอบการรายงานผลให้ ตร. ผ่าน จต. (กต.๓ จต.) <span class="nw">ภายใน ๖๐ วัน</span> นับแต่วันที่ <span class="nw">ผู้ตรวจสอบข้อเท็จจริง</span>/หน่วยที่ได้รับมอบหมายให้ตรวจสอบข้อเท็จจริงได้รับเรื่อง <span class="nw">เพื่อดำเนินการ</span> <span class="nw">นำเสนอ ตร.</span> พิจารณาสั่งการต่อไป
+          </p>
+          <p class="content-p">
+            อนึ่ง ขอให้ถือปฏิบัติตามระเบียบว่าด้วยการรักษาความลับของทางราชการ <span class="nw">พ.ศ.๒๕๔๔</span> และ <span class="nw">พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ.๒๕๖๒</span> รวมทั้งให้พิจารณาให้ความคุ้มครองแก่ผู้ร้องอย่าให้ต้องได้รับภัยหรือความไม่ชอบธรรมอันเนื่องมาจากการร้องเรียนอย่างเคร่งครัด
+          </p>
+        `;
+      } else if (formType === "2") {
+        subjectText = "ส่งเรื่องร้องเรียน ร้องทุกข์ แจ้งเบาะแส (บัตรสนเท่ห์)";
+        closingText = "จึงแจ้งมาเพื่อพิจารณาดำเนินการในส่วนที่เกี่ยวข้อง";
+
+        contentHTML = `
+          <p class="content-p">
+            ด้วย ตร. โดย จต. ได้รับเรื่องร้องเรียนข้าราชการตำรวจ เรื่อง<span class="nw">ร้องทุกข์ และแจ้งเบาะแส</span> <span class="nw">อยู่ในความรับผิดชอบของ</span> <span class="dynamic-text">${unit}</span> จำนวน <span class="dynamic-text">${count}</span> เรื่อง รายละเอียดปรากฏตามเอกสารที่แนบ
+          </p>
+          <p class="content-p">
+            คณะทำงานพิจารณากลั่นกรองเรื่องร้องเรียนข้าราชการตำรวจ เรื่องร้องทุกข์ขอความ<span class="nw">ช่วยเหลือ หรือแจ้งเบาะแสการกระทำผิดกฎหมาย</span> สำนักงานจเรตำรวจ ตามคำสั่ง จต. ที่ ๒๑๑/๒๕๖๘ <span class="nw">ลง ๒๙ ต.ค.๖๘</span> ในการประชุมครั้งที่ <span class="dynamic-text">${meeting}</span> เมื่อวันที่ <span class="dynamic-text">${meetingDate}</span> พิจารณาแล้วเห็นว่า เรื่องร้องเรียน<span class="nw">ร้องทุกข์ และแจ้งเบาะแสดังกล่าว</span> อยู่ในความรับผิดชอบของ <span class="dynamic-text">${unit}</span> <span class="nw">จึงมีมติส่งเรื่องดังกล่าวมายังท่าน</span> <span class="nw">เพื่อพิจารณาดำเนินการตามหน้าที่และอำนาจต่อไป</span> พร้อมทั้งให้รายงานผลการดำเนินการเป็นรายเดือน <span class="nw">ในรูปแบบบัญชีตาม QR CODE</span> ที่แนบ<span style="white-space: nowrap; letter-spacing: -0.5px;">ให้ จต. (ผ่าน ฝรท.บก.อก.จต.) ภายในวันที่ ๑๐ ของเดือนถัดไป เพื่อเก็บไว้เป็นสถิติ และรายงาน ตร. ทราบต่อไป</span>
+          </p>
+        `;
+      } else if (formType === "3") {
+        subjectText = "ส่งเรื่องร้องทุกข์ แจ้งเบาะแส และขอความช่วยเหลือ";
+        closingText = "จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการในส่วนที่เกี่ยวข้อง";
+
+        contentHTML = `
+          <p class="content-p">
+            <span class="nw" style="letter-spacing: -0.6px;">ด้วย ตร. โดย จต. ได้รับเรื่องร้องทุกข์ แจ้งเบาะแส และขอความช่วยเหลือซึ่งอยู่ในความรับผิดชอบ</span> ของ <span class="dynamic-text">${unit}</span> จำนวน <span class="dynamic-text">${count}</span> เรื่อง รายละเอียดปรากฏตามเอกสารที่แนบ
+          </p>
+          <p class="content-p">
+            คณะทำงานพิจารณากลั่นกรองเรื่องร้องเรียนข้าราชการตำรวจ เรื่องร้องทุกข์ขอความ<span class="nw">ช่วยเหลือ หรือแจ้งเบาะแสการกระทำผิดกฎหมาย</span> สำนักงานจเรตำรวจ ตามคำสั่ง จต. ที่ ๒๑๑/๒๕๖๘ <span class="nw">ลง ๒๙ ต.ค.๖๘</span> ในการประชุมครั้งที่ <span class="dynamic-text">${meeting}</span> เมื่อวันที่ <span class="dynamic-text">${meetingDate}</span> พิจารณาแล้วเห็นว่า เรื่องร้องเรียน<span class="nw">ร้องทุกข์ และแจ้งเบาะแสดังกล่าว</span> อยู่ในความรับผิดชอบของ <span class="dynamic-text">${unit}</span> <span class="nw">จึงมีมติส่งเรื่องดังกล่าวมายังท่าน</span> <span class="nw">เพื่อพิจารณาดำเนินการตามหน้าที่และอำนาจต่อไป</span> เมื่อเสร็จสิ้นแล้วให้แจ้งผลแก่ผู้ร้อง (ถ้ามี) และหน่วยงานที่ส่งเรื่องมา (ถ้ามี) พร้อมทั้งให้รายงานผลการดำเนินการเป็นรายเดือน <span class="nw">ในรูปแบบบัญชีตาม QR CODE</span> ที่แนบ<span style="white-space: nowrap; letter-spacing: -0.5px;">ให้ จต. (ผ่าน ฝรท.บก.อก.จต.) ทราบภายในวันที่ ๑๐ ของเดือนถัดไป เพื่อเก็บไว้เป็นสถิติ และรายงาน ตร. ทราบต่อไป</span>
+          </p>
+        `;
+      }
+
+      document.querySelectorAll('.txtSubject').forEach(el => el.innerText = subjectText);
+      document.querySelectorAll('.txtClosing').forEach(el => el.innerText = closingText);
+      document.querySelectorAll('.dynamicContent').forEach(el => el.innerHTML = contentHTML);
+    }
+
+    updateDocument();
+  </script>
+</body>
+</html>
